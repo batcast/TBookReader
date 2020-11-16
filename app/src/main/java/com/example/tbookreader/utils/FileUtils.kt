@@ -27,8 +27,6 @@ object FileUtils {
 
     fun createFileIfNotExist(root: File, fileName: String, vararg subDirs: String) = createFileIfNotExist(getPath(root, fileName, *subDirs))
 
-    fun createFileIfNotExist(root: File, vararg subDirs: String) = createFolderIfNotExist(getPath(root, subDirs = *subDirs))
-
     fun createFolderIfNotExist(filePath: String): File {
         val file = File(filePath)
         //如果文件夹不存在，就创建它

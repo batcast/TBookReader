@@ -9,22 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".SearchBookOrAuthor"
-            android:label="@string/title_activity_search_book_or_author"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
 
 
-        <activity
-            android:name=".ScrollingActivity"
-            android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

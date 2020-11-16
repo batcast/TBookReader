@@ -3,6 +3,8 @@ package com.example.tbookreader.base
 import android.content.Context
 import android.os.Bundle
 import android.util.AttributeSet
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.view.WindowManager
 import android.widget.FrameLayout
@@ -14,8 +16,13 @@ import com.example.tbookreader.lib.theme.ATH
 import com.example.tbookreader.lib.theme.ColorUtils
 import com.example.tbookreader.lib.theme.backgroundColor
 import com.example.tbookreader.lib.theme.primaryColor
+import com.example.tbookreader.utils.applyOpenTint
+import com.example.tbookreader.utils.applyTint
+import com.example.tbookreader.utils.disableAutoFill
+import com.example.tbookreader.utils.hideSoftInput
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.cancel
 
 abstract class BaseActivity(
         private val layoutID: Int,
@@ -42,6 +49,40 @@ abstract class BaseActivity(
         observeLiveBus()
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        cancel()
+    }
+
+    final override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        return menu?.let {
+            val bool = onCompatCreateOptionsMenu(it)
+            it.applyTint(this, theme)
+            bool
+        } ?: super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onMenuOpened(featureId: Int, menu: Menu): Boolean {
+        menu.applyOpenTint(this)
+        return super.onMenuOpened(featureId, menu)
+    }
+
+    open fun onCompatCreateOptionsMenu(menu: Menu): Boolean {
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    final override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == android.R.id.home) {
+            supportFinishAfterTransition()
+            return true
+        }
+        return onCompatOptionsItemSelected(item)
+    }
+
+    open fun onCompatOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
+    }
+
     /**
      * 初始化主题
      * @author 汪凯
@@ -55,7 +96,7 @@ abstract class BaseActivity(
             else -> if (ColorUtils.isColorLight(primaryColor)) {
                 setTheme(R.style.AppTheme_Light)
             } else {
-                setTheme(R.style.AppTheme_Dark))
+                setTheme(R.style.AppTheme_Dark)
             }
         }
     }
@@ -70,7 +111,13 @@ abstract class BaseActivity(
             window.decorView.systemUiVisibility =
                     View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
         }
-
+        ATH.setStatusBarColorAuto(this, fullScreen)
+        if (theme == Theme.Dark) {
+            ATH.setLightStatusBar(this, false)
+        } else if (theme == Theme.Light) {
+            ATH.setLightStatusBar(this, true)
+        }
+        upNavigationBarColor()
     }
 
     open fun upNavigationBarColor() {

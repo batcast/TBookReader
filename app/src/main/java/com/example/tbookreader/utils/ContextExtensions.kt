@@ -114,6 +114,9 @@ fun Context.openUrl(uri: Uri) {
     }
 }
 
+/**
+ * 获取系统channel通道包名
+ */
 val Context.channel: String
     get() {
         try {
